@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sign In — Reel-Scout Crew Directory</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* Full‑screen cinematic shell */
+    html,body{height:100%;overflow:hidden}
+    @media(max-width:768px){html,body{overflow:auto}}
+
+    .shell{
+      height:100vh;min-height:600px;
+      display:grid;grid-template-columns:1fr 480px;
+    }
+
+    /* ── LEFT: Cinematic dark panel ── */
+    .cinema{
+      position:relative;
+      background:var(--ink);
+      overflow:hidden;
+      display:flex;flex-direction:column;justify-content:space-between;
+      padding:var(--s10) var(--s12);
+    }
+
+    /* Film‑grain texture overlay */
+    .cinema::before{
+      content:'';position:absolute;inset:0;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity:.4;pointer-events:none;z-index:0;
+    }
+
+    /* Red radial accent */
+    .cinema::after{
+      content:'';position:absolute;
+      top:-30%;left:-20%;width:80%;height:80%;
+      background:radial-gradient(ellipse,rgba(196,18,48,.22) 0%,transparent 65%);
+      pointer-events:none;z-index:0;
+    }
+
+    /* Film strip decoration on right edge */
+    .filmstrip{
+      position:absolute;right:0;top:0;bottom:0;
+      width:40px;
+      background:repeating-linear-gradient(
+        to bottom,
+        var(--ink-3) 0px,var(--ink-3) 20px,
+        var(--ink-4) 20px,var(--ink-4) 24px
+      );
+      display:flex;flex-direction:column;align-items:center;
+      padding:var(--s4) 0;gap:var(--s3);z-index:1;
+    }
+    .filmhole{
+      width:18px;height:14px;
+      border-radius:var(--r1);
+      background:var(--ink-2);
+      border:1px solid rgba(255,255,255,.06);
+      flex-shrink:0;
+    }
+
+    /* Wave lines (brand motif) */
+    .wavelines{position:absolute;bottom:0;left:0;right:0;height:40%;opacity:.08;z-index:0;pointer-events:none}
+    .wavelines svg{width:100%;height:100%}
+
+    .cin-top,.cin-mid,.cin-bot{position:relative;z-index:1}
+
+    /* Logo */
+    .cin-logo{
+      display:inline-flex;align-items:center;gap:var(--s3);
+      text-decoration:none;
+    }
+    .cin-logo-text{
+      font-size:var(--3xl);font-weight:800;
+      color:#fff;letter-spacing:-.05em;
+    }
+    /* Red underline accent on logo */
+    .cin-logo::after{
+      content:'';display:block;
+      height:3px;background:var(--red);
+      border-radius:2px;
+      position:absolute;bottom:-4px;left:0;right:0;
+    }
+    .cin-logo{position:relative}
+
+    /* Headline */
+    .cin-hl{
+      font-size:clamp(2rem,3.5vw,3rem);
+      font-weight:800;color:#fff;
+      line-height:1.1;letter-spacing:-.04em;
+      margin-bottom:var(--s5);
+    }
+    .cin-hl .accent{
+      display:block;
+      background:linear-gradient(90deg,var(--red),#FF5A36);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .cin-body{color:var(--inv2);font-size:var(--lg);line-height:1.7;max-width:420px}
+
+    /* Stats row */
+    .cin-stats{
+      display:flex;gap:var(--s10);
+      padding-top:var(--s8);
+      border-top:1px solid rgba(255,255,255,.1);
+    }
+    .stat-n{
+      font-size:var(--3xl);font-weight:800;color:#fff;
+      letter-spacing:-.04em;line-height:1;
+    }
+    .stat-l{
+      font-size:var(--xs);color:var(--inv3);
+      text-transform:uppercase;letter-spacing:.1em;
+      font-weight:700;margin-top:4px;
+    }
+
+    /* Testimonial */
+    .cin-quote{
+      position:relative;z-index:1;
+      background:rgba(255,255,255,.05);
+      border:1px solid rgba(255,255,255,.08);
+      border-left:3px solid var(--red);
+      border-radius:var(--r3);
+      padding:var(--s5);
+      backdrop-filter:blur(8px);
+    }
+    .cin-quote p{color:var(--inv2);font-size:var(--sm);font-style:italic;line-height:1.7;margin-bottom:var(--s3)}
+    .cin-quote cite{color:var(--inv3);font-size:var(--xs);font-weight:700;font-style:normal;text-transform:uppercase;letter-spacing:.07em}
+
+    /* ── RIGHT: Form panel ── */
+    .form-panel{
+      background:var(--bg);
+      display:flex;flex-direction:column;justify-content:center;
+      padding:var(--s12) var(--s10);
+      overflow-y:auto;
+      position:relative;
+    }
+    /* Subtle top red line */
+    .form-panel::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--red),#FF5A36);
+    }
+
+    .form-inner{width:100%;max-width:380px}
+
+    .form-eyebrow{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-size:var(--xs);font-weight:800;
+      text-transform:uppercase;letter-spacing:.1em;color:var(--red);
+      margin-bottom:var(--s4);
+    }
+    .form-eyebrow::before{content:'';width:18px;height:2px;background:var(--red);border-radius:1px}
+
+    .form-title{font-size:var(--3xl);font-weight:800;letter-spacing:-.04em;margin-bottom:var(--s2);color:var(--t1)}
+    .form-sub{font-size:var(--sm);color:var(--t2);margin-bottom:var(--s8);line-height:1.6}
+
+    /* Step visibility */
+    .step{} .step.gone{display:none}
+    .pstep{display:none}.pstep.show{display:block}
+
+    .back-btn{display:inline-flex;align-items:center;gap:var(--s2);font-size:var(--sm);font-weight:600;color:var(--t2);background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;margin-bottom:var(--s6);transition:color var(--fast)}
+    .back-btn:hover{color:var(--red)}
+    .back-btn:focus-visible{outline:2px solid var(--navy);border-radius:var(--r1)}
+
+    /* Profile grid */
+    .pgrid{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3);margin:var(--s5) 0}
+    .pcard{
+      display:flex;flex-direction:column;align-items:center;gap:var(--s2);
+      padding:var(--s5) var(--s3);
+      border:1.5px solid var(--border);border-radius:var(--r5);
+      cursor:pointer;background:var(--surface);font-family:var(--font);
+      transition:all var(--base) var(--smooth);text-align:center;
+      position:relative;overflow:hidden;
+    }
+    .pcard::after{
+      content:'';position:absolute;bottom:0;left:0;right:0;height:2px;
+      background:var(--red);transform:scaleX(0);transition:transform var(--base) var(--smooth);
+    }
+    .pcard:hover{border-color:var(--red);transform:translateY(-2px);box-shadow:0 8px 24px rgba(196,18,48,.12)}
+    .pcard:hover::after{transform:scaleX(1)}
+    .pcard.sel{border-color:var(--red);box-shadow:0 0 0 3px rgba(196,18,48,.15)}
+    .pcard.sel::after{transform:scaleX(1)}
+    .pcard:focus-visible{outline:2px solid var(--red);outline-offset:2px}
+
+    .pava{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:800;color:#fff;letter-spacing:-.02em}
+    .pava.add{background:var(--surface-2)!important;border:2px dashed var(--border-2);color:var(--t3);font-size:24px}
+    .pname{font-size:var(--sm);font-weight:700;color:var(--t1);line-height:1.25}
+    .prole{font-size:var(--xs);color:var(--t3);font-weight:500}
+
+    .form-foot{text-align:center;margin-top:var(--s6);font-size:var(--sm);color:var(--t3)}
+    .form-foot a{color:var(--red);font-weight:700}
+
+    @media(max-width:1024px){
+      .shell{grid-template-columns:1fr 420px}
+      .cinema{padding:var(--s8)}
+    }
+    @media(max-width:768px){
+      html,body{overflow:auto}
+      .shell{grid-template-columns:1fr}
+      .cinema{display:none}
+      .form-panel{padding:var(--s10) var(--s6)}
+      .form-inner{max-width:100%}
+    }
+    @media(max-width:480px){
+      .pgrid{grid-template-columns:1fr}
+      .form-panel{padding:var(--s8) var(--s4)}
+    }
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<div class="shell">
+
+  <!-- CINEMATIC LEFT PANEL -->
+  <aside class="cinema" aria-hidden="true">
+    <!-- Film strip edge decoration -->
+    <div class="filmstrip" aria-hidden="true">
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+      <div class="filmhole"></div><div class="filmhole"></div><div class="filmhole"></div>
+    </div>
+
+    <!-- Wave brand motif -->
+    <div class="wavelines">
+      <svg viewBox="0 0 800 300" fill="none" preserveAspectRatio="xMidYMid slice">
+        <path d="M-100 80 Q200 20 400 80 T900 80" stroke="white" stroke-width="1.5"/>
+        <path d="M-100 140 Q200 80 400 140 T900 140" stroke="white" stroke-width="1"/>
+        <path d="M-100 200 Q200 140 400 200 T900 200" stroke="white" stroke-width="1.5"/>
+        <path d="M-100 260 Q200 200 400 260 T900 260" stroke="white" stroke-width="1"/>
+      </svg>
+    </div>
+
+    <div class="cin-top">
+      <a href="crew_directorylist.html" class="cin-logo" tabindex="-1">
+        <span class="cin-logo-text">reelscout</span>
+      </a>
+    </div>
+
+    <div class="cin-mid">
+      <h2 class="cin-hl">
+        The professional directory for<br>
+        <span class="accent">film &amp; TV crew.</span>
+      </h2>
+      <p class="cin-body">
+        Find, contact, and manage production professionals across every department —
+        from any device, on any production.
+      </p>
+    </div>
+
+    <div style="position:relative;z-index:1;">
+      <div class="cin-quote">
+        <p>"Reel-Scout has become an essential tool for our production office. We filled three key crew positions in under 48 hours."</p>
+        <cite>— Line Producer, Netflix Feature</cite>
+      </div>
+    </div>
+
+    <div class="cin-bot">
+      <div class="cin-stats">
+        <div><div class="stat-n">12k+</div><div class="stat-l">Crew Members</div></div>
+        <div><div class="stat-n">80+</div><div class="stat-l">Departments</div></div>
+        <div><div class="stat-n">All 50</div><div class="stat-l">US States</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- FORM PANEL -->
+  <main class="form-panel" id="main">
+    <div class="form-inner">
+
+      <!-- Mobile logo -->
+      <div style="margin-bottom:var(--s8);display:none;" class="mob-logo">
+        <span style="font-size:var(--2xl);font-weight:800;color:var(--red);letter-spacing:-.05em;">reelscout</span>
+      </div>
+
+      <!-- STEP 1: Credentials -->
+      <section class="step" id="s-login" aria-label="Sign in">
+        <div class="form-eyebrow">Crew Directory</div>
+        <h1 class="form-title">Welcome back.</h1>
+        <p class="form-sub">Sign in to access your crew profiles and manage your listing.</p>
+
+        <div class="alert a-err" id="login-err" role="alert" hidden style="margin-bottom:var(--s5);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="flex-shrink:0;margin-top:1px"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>Incorrect email or password. Please try again.</span>
+        </div>
+
+        <form id="login-form" novalidate>
+          <div class="field">
+            <div class="field-wrap">
+              <input class="fi" type="email" id="email" placeholder="e" autocomplete="email" required aria-required="true" aria-describedby="e-err">
+              <label class="fl" for="email">Email address</label>
+            </div>
+            <span class="ferr" id="e-err" role="alert">Please enter a valid email address.</span>
+          </div>
+
+          <div class="field" style="margin-bottom:var(--s2);">
+            <div class="field-wrap" style="position:relative;">
+              <input class="fi" type="password" id="pw" placeholder="p" autocomplete="current-password" required aria-required="true" aria-describedby="p-err" style="padding-right:3.2rem;">
+              <label class="fl" for="pw">Password</label>
+              <button type="button" class="eye" onclick="toggleEye('pw','eye-icon')" aria-label="Show password">
+                <svg id="eye-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                </svg>
+              </button>
+            </div>
+            <span class="ferr" id="p-err" role="alert">Please enter your password.</span>
+          </div>
+
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s7);">
+            <label class="chk">
+              <input class="chk-box" type="checkbox" id="rem">
+              <span class="chk-txt">Keep me signed in</span>
+            </label>
+            <a href="#" style="font-size:var(--xs);font-weight:700;color:var(--navy);">Forgot password?</a>
+          </div>
+
+          <button type="submit" class="btn btn-red btn-full btn-lg" id="sign-in-btn">
+            Sign in
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </form>
+
+        <div class="divider">or</div>
+        <div class="form-foot">
+          New to Reel-Scout?
+          <a href="crew_registration.html">Create a free profile</a>
+        </div>
+      </section>
+
+      <!-- STEP 2: Profile chooser -->
+      <section class="pstep" id="s-profiles" aria-label="Choose a profile">
+        <button class="back-btn" onclick="showLogin()" aria-label="Back to sign in">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+          Back
+        </button>
+
+        <div class="form-eyebrow">Your Profiles</div>
+        <h1 class="form-title">Choose a profile.</h1>
+        <p class="form-sub">Select which profile you'd like to view or edit. You can maintain multiple profiles for different roles.</p>
+
+        <div class="pgrid" role="list" aria-label="Your crew profiles">
+          <button class="pcard au" role="listitem" onclick="selProfile(this)" aria-label="Edit: Fiona Cameron, Director of Photography">
+            <div class="pava" style="background:linear-gradient(135deg,var(--red),#E8502A);" aria-hidden="true">FC</div>
+            <div class="pname">Fiona Cameron</div>
+            <div class="prole">Dir. of Photography</div>
+          </button>
+          <button class="pcard au d1" role="listitem" onclick="selProfile(this)" aria-label="Edit: Fiona Cameron, Gaffer">
+            <div class="pava" style="background:linear-gradient(135deg,var(--navy),#2A5FAF);" aria-hidden="true">FC</div>
+            <div class="pname">Fiona Cameron</div>
+            <div class="prole">Gaffer</div>
+          </button>
+          <button class="pcard au d2" role="listitem" onclick="selProfile(this)" aria-label="Edit: Fiona Cameron, Camera Operator">
+            <div class="pava" style="background:linear-gradient(135deg,#1A6E3C,#2A9E58);" aria-hidden="true">FC</div>
+            <div class="pname">Fiona Cameron</div>
+            <div class="prole">Camera Operator</div>
+          </button>
+          <button class="pcard au d3" role="listitem" onclick="newProfile()" aria-label="Add a new profile">
+            <div class="pava add" aria-hidden="true">+</div>
+            <div class="pname" style="color:var(--t3);">Add Profile</div>
+            <div class="prole">New role or market</div>
+          </button>
+        </div>
+        <p style="text-align:center;font-size:var(--xs);color:var(--t3);">One account · unlimited profiles</p>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+<style>@media(max-width:768px){.mob-logo{display:flex!important}}</style>
+
+<script>
+function toggleEye(fieldId, iconId) {
+  const f = document.getElementById(fieldId);
+  const ic = document.getElementById(iconId);
+  const shown = f.type === 'text';
+  f.type = shown ? 'password' : 'text';
+  ic.innerHTML = shown
+    ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>'
+    : '<path d="M17.94 17.94A10.07 10.07 0 0112 20c-7 0-11-8-11-8a18.45 18.45 0 015.06-5.94M9.9 4.24A9.12 9.12 0 0112 4c7 0 11 8 11 8a18.5 18.5 0 01-2.16 3.19"/><line x1="1" y1="1" x2="23" y2="23"/>';
+}
+
+document.getElementById('login-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const em = document.getElementById('email');
+  const pw = document.getElementById('pw');
+  let ok = true;
+  document.getElementById('e-err').classList.remove('show');
+  document.getElementById('p-err').classList.remove('show');
+  document.getElementById('login-err').hidden = true;
+  em.removeAttribute('aria-invalid'); pw.removeAttribute('aria-invalid');
+
+  if (!em.value || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(em.value)) {
+    em.setAttribute('aria-invalid','true');
+    document.getElementById('e-err').classList.add('show');
+    ok = false;
+  }
+  if (!pw.value) {
+    pw.setAttribute('aria-invalid','true');
+    document.getElementById('p-err').classList.add('show');
+    ok = false;
+  }
+  if (ok) {
+    const btn = document.getElementById('sign-in-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="animation:spin .8s linear infinite"><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0"/></svg> Signing in…';
+    setTimeout(() => {
+      document.getElementById('s-login').classList.add('gone');
+      const p = document.getElementById('s-profiles');
+      p.classList.add('show');
+      p.querySelector('.back-btn').focus();
+    }, 700);
+  }
+});
+
+function showLogin() {
+  document.getElementById('s-login').classList.remove('gone');
+  document.getElementById('s-profiles').classList.remove('show');
+  const btn = document.getElementById('sign-in-btn');
+  btn.disabled = false;
+  btn.innerHTML = 'Sign in <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+  document.getElementById('email').focus();
+}
+
+function selProfile(card) {
+  document.querySelectorAll('.pcard').forEach(c => c.classList.remove('sel'));
+  card.classList.add('sel');
+  setTimeout(() => window.location.href = 'crew_registration.html', 300);
+}
+function newProfile() { window.location.href = 'crew_registration.html'; }
+</script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+</body>
+</html>

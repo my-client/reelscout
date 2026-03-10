@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="refresh" content="0;url=crew_directorylist.html">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reel-Scout — Film & TV Crew Directory</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{
+      min-height:100vh;
+      background:#0A0A0F;
+      display:flex;align-items:center;justify-content:center;
+      font-family:'Plus Jakarta Sans',system-ui,sans-serif;
+      background-image:
+        radial-gradient(ellipse 60% 70% at 15% 50%, rgba(196,18,48,.18) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 50% at 85% 20%, rgba(27,58,107,.2) 0%, transparent 55%),
+        radial-gradient(circle, rgba(255,255,255,.05) 1px, transparent 1px);
+      background-size:100% 100%, 100% 100%, 28px 28px;
+    }
+    .splash{text-align:center;color:#fff;padding:40px 24px}
+    .logo{
+      font-size:clamp(2.5rem,6vw,4rem);font-weight:800;letter-spacing:-.05em;
+      margin-bottom:16px;
+      background:linear-gradient(135deg,#fff 0%,rgba(255,255,255,.6) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .logo span{
+      background:linear-gradient(90deg,#C41230,#FF5A36);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .tagline{
+      font-size:clamp(.95rem,2vw,1.2rem);color:rgba(255,255,255,.5);
+      margin-bottom:40px;font-weight:500;letter-spacing:-.01em;
+    }
+    .cta{
+      display:inline-flex;align-items:center;gap:10px;
+      background:#C41230;color:#fff;text-decoration:none;
+      padding:16px 36px;border-radius:12px;
+      font-size:1rem;font-weight:800;letter-spacing:-.01em;
+      box-shadow:0 8px 32px rgba(196,18,48,.35),0 2px 8px rgba(0,0,0,.3);
+      transition:background .15s,transform .15s,box-shadow .15s;
+    }
+    .cta:hover{
+      background:#A50F28;
+      transform:translateY(-2px);
+      box-shadow:0 12px 40px rgba(196,18,48,.45),0 4px 12px rgba(0,0,0,.35);
+    }
+    .cta svg{flex-shrink:0}
+    .note{margin-top:20px;font-size:.78rem;color:rgba(255,255,255,.25)}
+  </style>
+</head>
+<body>
+  <div class="splash">
+    <div class="logo">Reel<span>-Scout</span></div>
+    <p class="tagline">The professional network for film &amp; TV crews</p>
+    <a class="cta" href="crew_directorylist.html">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      Browse the Crew Directory
+    </a>
+    <p class="note">Redirecting automatically…</p>
+  </div>
+  <script>
+    // Immediate redirect — meta refresh is fallback
+    window.location.replace('crew_directorylist.html');
+  </script>
+</body>
+</html>

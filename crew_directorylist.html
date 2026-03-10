@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crew Directory — Reel-Scout</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ── NAV ── */
+    .topnav{
+      height:var(--nav-h);background:var(--red);
+      position:sticky;top:0;z-index:100;
+      box-shadow:0 2px 20px rgba(196,18,48,.3);
+    }
+    .topnav::after{
+      content:'';position:absolute;right:0;top:0;bottom:0;width:50%;
+      background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 600 64' fill='none'%3E%3Cpath d='M0 32Q150 8 300 32T600 32' stroke='rgba(255,255,255,0.12)' stroke-width='1.5'/%3E%3Cpath d='M0 52Q150 28 300 52T600 52' stroke='rgba(255,255,255,0.07)' stroke-width='1'/%3E%3Cpath d='M0 12Q150 -12 300 12T600 12' stroke='rgba(255,255,255,0.07)' stroke-width='1'/%3E%3C/svg%3E")
+      right center/cover no-repeat;pointer-events:none;
+    }
+    .ni{max-width:var(--max-w);margin:0 auto;padding:0 var(--s8);height:100%;display:flex;align-items:center;justify-content:space-between}
+    .nlogo{font-size:var(--2xl);font-weight:800;color:#fff;text-decoration:none;letter-spacing:-.05em;position:relative;z-index:1}
+    .nlinks{display:flex;align-items:center;gap:var(--s2);position:relative;z-index:1}
+    .nlk{padding:7px 12px;border-radius:var(--r2);font-size:var(--sm);font-weight:600;color:rgba(255,255,255,.75);text-decoration:none;transition:background var(--fast),color var(--fast)}
+    .nlk:hover{background:rgba(255,255,255,.1);color:#fff}
+
+    /* ── HERO ── */
+    .hero{
+      background:var(--ink);
+      padding:var(--s16) 0 var(--s12);
+      position:relative;overflow:hidden;
+    }
+    /* Cinematic dark gradient */
+    .hero::before{
+      content:'';position:absolute;inset:0;
+      background:
+        radial-gradient(ellipse 60% 80% at 10% 50%, rgba(196,18,48,.2) 0%, transparent 60%),
+        radial-gradient(ellipse 40% 60% at 85% 20%, rgba(27,58,107,.25) 0%, transparent 55%);
+      pointer-events:none;
+    }
+    /* Dot grid */
+    .hero::after{
+      content:'';position:absolute;inset:0;
+      background-image:radial-gradient(circle,rgba(255,255,255,.06) 1px,transparent 1px);
+      background-size:28px 28px;pointer-events:none;
+    }
+    .hero-in{position:relative;z-index:1}
+
+    .hero-tag{
+      display:inline-flex;align-items:center;gap:var(--s2);
+      font-size:var(--xs);font-weight:800;text-transform:uppercase;letter-spacing:.1em;
+      color:rgba(255,255,255,.45);margin-bottom:var(--s5);
+    }
+    .hero-tag span{width:6px;height:6px;border-radius:50%;background:var(--red);display:block}
+
+    .hero-h{
+      font-size:clamp(2.5rem,5vw,4rem);font-weight:800;
+      color:#fff;letter-spacing:-.05em;line-height:1.05;
+      margin-bottom:var(--s5);
+    }
+    .hero-h .hl{
+      background:linear-gradient(90deg,var(--red) 0%,#FF5A36 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+    }
+    .hero-sub{color:rgba(255,255,255,.55);font-size:var(--lg);margin-bottom:var(--s10);max-width:540px}
+
+    /* ── SEARCH BOX ── */
+    .sbox{
+      background:rgba(255,255,255,.07);
+      border:1px solid rgba(255,255,255,.1);
+      border-radius:var(--r5);
+      backdrop-filter:blur(20px);
+      overflow:hidden;
+      max-width:920px;
+      transition:background var(--fast),border-color var(--fast);
+      box-shadow:0 16px 64px rgba(0,0,0,.4);
+    }
+    .sbox:focus-within{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.2)}
+    .sbox-top{
+      display:grid;
+      grid-template-columns:1fr 1.5px 190px 1.5px 175px auto;
+      align-items:center;
+    }
+    .sdiv{background:rgba(255,255,255,.1);width:1.5px;height:30px;flex-shrink:0}
+    .sf{
+      display:flex;align-items:center;gap:var(--s3);
+      padding:var(--s4) var(--s5);
+    }
+    .sf svg{flex-shrink:0;color:rgba(255,255,255,.35)}
+    .sf input{background:none;border:none;outline:none;font-family:var(--font);font-size:var(--md);color:#fff;width:100%}
+    .sf input::placeholder{color:rgba(255,255,255,.4)}
+    .ss{display:flex;align-items:center;gap:var(--s2);padding:var(--s4) var(--s4)}
+    .ss svg{flex-shrink:0;color:rgba(255,255,255,.35)}
+    .ss select{background:none;border:none;outline:none;font-family:var(--font);font-size:var(--sm);color:rgba(255,255,255,.8);cursor:pointer;appearance:none;flex:1;min-width:0}
+    .ss select option{background:var(--ink-3);color:var(--t1)}
+    .sbtn{background:var(--red);color:#fff;border:none;margin:var(--s2);border-radius:var(--r3);padding:13px 28px;font-family:var(--font);font-size:var(--sm);font-weight:800;cursor:pointer;display:flex;align-items:center;gap:var(--s2);transition:background var(--fast),box-shadow var(--fast)}
+    .sbtn:hover{background:var(--red-dark);box-shadow:var(--e-red)}
+    .sbtn:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+    /* Quick filter pills under search */
+    .sbox-bot{
+      padding:var(--s3) var(--s5);
+      border-top:1px solid rgba(255,255,255,.06);
+      display:flex;align-items:center;gap:var(--s2);flex-wrap:wrap;
+    }
+    .sbox-label{font-size:var(--xs);font-weight:700;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-right:var(--s2)}
+    .qpill{
+      padding:5px 13px;border:1px solid rgba(255,255,255,.12);
+      border-radius:var(--rf);background:rgba(255,255,255,.05);
+      color:rgba(255,255,255,.65);font-size:var(--xs);font-weight:700;
+      cursor:pointer;font-family:var(--font);
+      transition:all var(--fast) var(--smooth);
+    }
+    .qpill:hover{background:rgba(255,255,255,.1);color:#fff}
+    .qpill.on{background:var(--red);border-color:var(--red);color:#fff;box-shadow:0 3px 10px rgba(196,18,48,.4)}
+    .qpill:focus-visible{outline:2px solid #fff;outline-offset:2px}
+
+    /* Hero stats bar */
+    .hero-stats{
+      display:flex;align-items:center;gap:var(--s8);
+      margin-top:var(--s8);padding-top:var(--s6);
+      border-top:1px solid rgba(255,255,255,.07);
+    }
+    .hstat-n{font-size:var(--xl);font-weight:800;color:#fff;letter-spacing:-.03em}
+    .hstat-l{font-size:var(--xs);color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+    .hstat-sep{width:1px;height:32px;background:rgba(255,255,255,.08)}
+
+    /* ── BODY LAYOUT ── */
+    .dbody{padding:var(--s8) 0 var(--s20)}
+    .dlayout{display:grid;grid-template-columns:var(--sidebar-w) 1fr;gap:var(--s8);align-items:start}
+
+    /* ── FILTER SIDEBAR ── */
+    .fcol{position:sticky;top:calc(var(--nav-h) + var(--s5))}
+    .fhd{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s4)}
+    .fhd h2{font-size:var(--lg);font-weight:800;letter-spacing:-.025em}
+    .fclr{font-size:var(--xs);color:var(--red);font-weight:700;background:none;border:none;cursor:pointer;font-family:var(--font);padding:0;text-decoration:underline}
+    .fclr:hover{color:var(--red-dark)}
+
+    .achips{display:flex;flex-wrap:wrap;gap:var(--s2);margin-bottom:var(--s4)}
+
+    .fcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--r4);overflow:hidden;box-shadow:var(--e1)}
+    .fsec{border-bottom:1px solid var(--border)}
+    .fsec:last-child{border-bottom:none}
+    .fsbtn{display:flex;align-items:center;justify-content:space-between;width:100%;padding:var(--s4) var(--s5);background:none;border:none;cursor:pointer;font-family:var(--font);font-size:var(--sm);font-weight:700;color:var(--t1);text-align:left;transition:background var(--fast)}
+    .fsbtn:hover{background:var(--surface-2)}
+    .fsbtn:focus-visible{outline:2px solid var(--navy);outline-offset:-2px}
+    .fchev{color:var(--t3);transition:transform var(--fast)}
+    .fsec.op .fchev{transform:rotate(180deg)}
+    .fsbody{padding:0 var(--s5) var(--s4);display:none}
+    .fsec.op .fsbody{display:block}
+    .fopts{display:flex;flex-direction:column;gap:var(--s2);max-height:200px;overflow-y:auto}
+    .fopt{display:flex;align-items:center;gap:var(--s3);font-size:var(--sm);color:var(--t2);cursor:pointer;padding:3px 0;transition:color var(--fast)}
+    .fopt:hover{color:var(--t1)}
+    .fopt input{accent-color:var(--red);width:16px;height:16px;flex-shrink:0;cursor:pointer}
+    .fct{margin-left:auto;font-size:var(--xs);color:var(--t3)}
+
+    /* ── RESULT BAR ── */
+    .rbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:var(--s5);flex-wrap:wrap;gap:var(--s3)}
+    .rcnt{font-size:var(--sm);color:var(--t2)}
+    .rcnt strong{color:var(--t1);font-weight:800}
+    .rctrl{display:flex;align-items:center;gap:var(--s3)}
+    .sorter{padding:8px 30px 8px 12px;border:1.5px solid var(--border);border-radius:var(--r2);font-family:var(--font);font-size:var(--sm);color:var(--t2);background:var(--surface);appearance:none;cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='none' stroke='%238A8680' stroke-width='1.5' d='M1 1l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;transition:border-color var(--fast)}
+    .sorter:focus{border-color:var(--navy);outline:none;box-shadow:var(--focus)}
+    .vtgl{display:flex;border:1.5px solid var(--border);border-radius:var(--r2);overflow:hidden}
+    .vbtn{padding:8px 11px;background:var(--surface);border:none;cursor:pointer;color:var(--t3);display:flex;align-items:center;transition:background var(--fast),color var(--fast)}
+    .vbtn:hover{background:var(--surface-2);color:var(--t2)}
+    .vbtn.on{background:var(--red);color:#fff}
+    .vbtn:focus-visible{outline:2px solid var(--navy);outline-offset:-2px}
+    .mob-fb{display:none}
+
+    /* ── LIST CARDS ── */
+    .rlist{display:flex;flex-direction:column;gap:var(--s3)}
+
+    .rcard{
+      display:grid;grid-template-columns:auto 1fr auto;
+      gap:var(--s6);align-items:center;
+      background:var(--surface);
+      border:1.5px solid var(--border);border-radius:var(--r4);
+      padding:var(--s6);box-shadow:var(--e1);
+      text-decoration:none;color:inherit;
+      transition:all var(--base) var(--smooth);
+      position:relative;overflow:hidden;
+    }
+    /* Red left accent strip */
+    .rcard::before{
+      content:'';position:absolute;left:0;top:0;bottom:0;
+      width:4px;background:var(--red);opacity:0;
+      border-radius:2px 0 0 2px;
+      transition:opacity var(--base);
+    }
+    .rcard:hover{border-color:rgba(196,18,48,.3);box-shadow:var(--e3);transform:translateY(-2px)}
+    .rcard:hover::before{opacity:1}
+    .rcard:focus-visible{outline:2px solid var(--red);outline-offset:2px;border-color:rgba(196,18,48,.3)}
+    .rcard,.rcard:hover,.rcard:focus,.rcard:visited{text-decoration:none !important;}
+    .rcard *{text-decoration:none;}
+
+    .rava{
+      width:68px;height:68px;border-radius:50%;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;font-weight:800;color:#fff;
+      flex-shrink:0;letter-spacing:-.025em;
+      position:relative;
+      overflow:hidden;
+      border:3px solid var(--surface);
+      box-shadow:0 3px 12px rgba(0,0,0,.15),0 0 0 1px rgba(0,0,0,.06);
+      transition:transform 200ms cubic-bezier(.22,1,.36,1),box-shadow 200ms;
+    }
+    .rava img{
+      width:100%;height:100%;
+      object-fit:cover;object-position:center top;
+      display:block;
+    }
+    .rcard:hover .rava{
+      transform:scale(1.05);
+      box-shadow:0 5px 18px rgba(0,0,0,.2),0 0 0 2px rgba(196,18,48,.2);
+    }
+    /* Thin ring around avatar */
+    .rava::after{
+      content:'';position:absolute;inset:-3px;
+      border-radius:50%;border:2px solid rgba(196,18,48,.25);
+      opacity:0;transition:opacity var(--base);
+      pointer-events:none;
+    }
+    .rcard:hover .rava::after{opacity:1}
+
+    .rinfo{}
+    .rname{font-size:var(--lg);font-weight:800;color:var(--t1);letter-spacing:-.03em;margin-bottom:3px}
+    .rrole{font-size:var(--sm);font-weight:700;color:var(--red);margin-bottom:var(--s3)}
+    .rmeta{display:flex;align-items:center;flex-wrap:wrap;gap:var(--s4);font-size:var(--xs);color:var(--t3)}
+    .rmi{display:flex;align-items:center;gap:4px;font-weight:600}
+    .rtags{display:flex;flex-wrap:wrap;gap:var(--s1);margin-top:var(--s3)}
+
+    .ract{display:flex;flex-direction:column;align-items:flex-end;gap:var(--s3);flex-shrink:0}
+    .adot{display:inline-flex;align-items:center;gap:6px;font-size:var(--xs);font-weight:800;white-space:nowrap;color:var(--t2)}
+    .dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .d-on{background:var(--green);box-shadow:0 0 0 3px var(--green-bg)}
+    .d-soon{background:#F59E0B;box-shadow:0 0 0 3px var(--amber-bg)}
+    .d-off{background:var(--border-2)}
+
+    .save-icon{background:none;border:1.5px solid var(--border);border-radius:var(--r2);padding:8px;cursor:pointer;color:var(--t3);display:flex;align-items:center;transition:all var(--fast)}
+    .save-icon:hover{border-color:var(--red);color:var(--red);background:var(--red-light)}
+    .save-icon:focus-visible{outline:2px solid var(--navy)}
+
+    /* Mobile overlay */
+    #mob-ov{display:none;position:fixed;inset:0;background:rgba(9,9,11,.6);z-index:199;backdrop-filter:blur(6px)}
+
+    /* Responsive */
+    @media(max-width:1024px){.dlayout{grid-template-columns:240px 1fr}}
+    @media(max-width:768px){
+      .dlayout{grid-template-columns:1fr}
+      .fcol{position:fixed;top:0;left:-105%;height:100vh;width:300px;background:var(--surface);z-index:200;overflow-y:auto;padding:var(--s10) var(--s5) var(--s8);box-shadow:var(--e5);transition:left var(--slow) var(--smooth)}
+      .fcol.open{left:0}
+      .mob-fb{display:flex}
+      .sbox-top{grid-template-columns:1fr}
+      .sdiv{display:none}
+      .sf{border-bottom:1px solid rgba(255,255,255,.08)}
+      .ss{border-bottom:1px solid rgba(255,255,255,.08)}
+      .sbtn{border-radius:0 0 var(--r4) var(--r4);margin:0;width:100%;justify-content:center;padding:14px}
+      .rcard{grid-template-columns:auto 1fr}
+      .ract{display:none}
+    }
+    @media(max-width:480px){.rava{width:48px;height:48px;font-size:16px}.rname{font-size:var(--md)}}
+  </style>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to main content</a>
+
+<!-- NAV -->
+<header class="topnav" role="banner">
+  <div class="ni">
+    <a href="crew_directorylist.html" class="nlogo">reelscout</a>
+    <div class="nlinks">
+      <a href="javascript:void(0)" class="nlk">Software</a>
+      <a href="javascript:void(0)" class="nlk">Features</a>
+      <a href="javascript:void(0)" class="nlk">About</a>
+      <a href="crew_login.html" class="btn btn-glass btn-sm">Sign in</a>
+      <a href="crew_registration.html" class="btn btn-white btn-sm">Create Profile</a>
+    </div>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" aria-labelledby="htitle">
+  <div class="wrap hero-in">
+    <div class="hero-tag"><span aria-hidden="true"></span>Reel-Scout Crew Directory</div>
+    <h1 class="hero-h" id="htitle">
+      Find your next<br>
+      <span class="hl">crew member.</span>
+    </h1>
+    <p class="hero-sub">Search thousands of verified film &amp; TV professionals. Every department. Every state.</p>
+
+    <form role="search" aria-label="Search crew directory">
+      <div class="sbox">
+        <div class="sbox-top">
+          <div class="sf">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="search" id="q" name="q" placeholder="Name, role, or skill…" aria-label="Search by name, role, or skill" autocomplete="off">
+          </div>
+          <div class="sdiv" aria-hidden="true"></div>
+          <div class="ss">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            <select aria-label="State">
+              <option value="">All States</option>
+              <option>California</option><option>New York</option><option>Georgia</option>
+              <option>Louisiana</option><option>Texas</option><option>Florida</option>
+              <option>New Mexico</option><option>North Carolina</option>
+            </select>
+          </div>
+          <div class="sdiv" aria-hidden="true"></div>
+          <div class="ss">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h7"/></svg>
+            <select aria-label="Department">
+              <option value="">All Depts.</option>
+              <option>Camera</option><option>Lighting</option><option>Grip</option>
+              <option>Sound</option><option>Art Dept.</option><option>Hair &amp; Makeup</option>
+              <option>Costume</option><option>Direction</option><option>Post Production</option>
+            </select>
+          </div>
+          <button type="submit" class="sbtn">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            Search
+          </button>
+        </div>
+        <div class="sbox-bot">
+          <span class="sbox-label" aria-hidden="true">Quick:</span>
+          <button type="button" class="qpill on" onclick="qp(this)" aria-pressed="true">Crew Members</button>
+          <button type="button" class="qpill" onclick="qp(this)" aria-pressed="false">Vendors &amp; Companies</button>
+          <button type="button" class="qpill" onclick="qp(this)" aria-pressed="false">Available Now</button>
+          <button type="button" class="qpill" onclick="qp(this)" aria-pressed="false">Union</button>
+          <button type="button" class="qpill" onclick="qp(this)" aria-pressed="false">Non-Union</button>
+        </div>
+      </div>
+    </form>
+
+    <div class="hero-stats" aria-label="Directory statistics">
+      <div><div class="hstat-n">12,480</div><div class="hstat-l">Total Listings</div></div>
+      <div class="hstat-sep" aria-hidden="true"></div>
+      <div><div class="hstat-n">342</div><div class="hstat-l">Camera Crew</div></div>
+      <div class="hstat-sep" aria-hidden="true"></div>
+      <div><div class="hstat-n">892</div><div class="hstat-l">Available Now</div></div>
+      <div class="hstat-sep" aria-hidden="true"></div>
+      <div><div class="hstat-n">All 50</div><div class="hstat-l">US States</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- BODY -->
+<main id="main" class="dbody">
+  <div class="wrap">
+    <div class="dlayout">
+
+      <!-- FILTERS -->
+      <aside class="fcol" id="fcol" aria-label="Filters">
+        <div class="fhd">
+          <h2>Filters</h2>
+          <button class="fclr" onclick="clrAll()" aria-label="Clear all filters">Clear all</button>
+        </div>
+        <div class="achips" id="achips" aria-live="polite" aria-label="Active filters">
+          <span class="chip">Camera <button class="crm" onclick="rmChip(this)" aria-label="Remove Camera filter">×</button></span>
+          <span class="chip">Available Now <button class="crm" onclick="rmChip(this)" aria-label="Remove Available Now filter">×</button></span>
+        </div>
+        <div class="fcard">
+          <div class="fsec op">
+            <button class="fsbtn" onclick="togF(this)" aria-expanded="true">Department <svg class="fchev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="fsbody">
+              <div class="fopts" role="group" aria-label="Department options">
+                <label class="fopt"><input type="checkbox" checked aria-label="Camera"> Camera <span class="fct">342</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Lighting"> Lighting <span class="fct">218</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Grip"> Grip <span class="fct">176</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Sound"> Sound <span class="fct">154</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Art Department"> Art Department <span class="fct">198</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Hair and Makeup"> Hair &amp; Makeup <span class="fct">210</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Costume"> Costume <span class="fct">89</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Post Production"> Post Production <span class="fct">267</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="fsec op">
+            <button class="fsbtn" onclick="togF(this)" aria-expanded="true">Location <svg class="fchev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="fsbody">
+              <div class="fopts" role="group" aria-label="State options">
+                <label class="fopt"><input type="checkbox" aria-label="California"> California <span class="fct">1,842</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="New York"> New York <span class="fct">1,204</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Georgia"> Georgia <span class="fct">876</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Louisiana"> Louisiana <span class="fct">543</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Texas"> Texas <span class="fct">487</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="fsec op">
+            <button class="fsbtn" onclick="togF(this)" aria-expanded="true">Availability <svg class="fchev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="fsbody">
+              <div class="fopts" role="group" aria-label="Availability options">
+                <label class="fopt"><input type="checkbox" checked aria-label="Available Now"> Available Now <span class="fct">892</span></label>
+                <label class="fopt"><input type="checkbox" aria-label="Available Soon"> Available Soon <span class="fct">341</span></label>
+              </div>
+            </div>
+          </div>
+          <div class="fsec">
+            <button class="fsbtn" onclick="togF(this)" aria-expanded="false">Union Status <svg class="fchev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="fsbody">
+              <div class="fopts" role="group" aria-label="Union options">
+                <label class="fopt"><input type="checkbox" aria-label="Union"> Union</label>
+                <label class="fopt"><input type="checkbox" aria-label="Non-Union"> Non-Union</label>
+              </div>
+            </div>
+          </div>
+          <div class="fsec">
+            <button class="fsbtn" onclick="togF(this)" aria-expanded="false">Willing to Travel <svg class="fchev" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+            <div class="fsbody">
+              <div class="fopts" role="group" aria-label="Travel options">
+                <label class="fopt"><input type="checkbox" aria-label="Local"> Local only</label>
+                <label class="fopt"><input type="checkbox" aria-label="Regional"> Regional</label>
+                <label class="fopt"><input type="checkbox" aria-label="Domestic"> Domestic (US)</label>
+                <label class="fopt"><input type="checkbox" aria-label="International"> International</label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <!-- RESULTS -->
+      <section aria-label="Search results">
+        <div class="rbar">
+          <div style="display:flex;align-items:center;gap:var(--s3);">
+            <button class="btn btn-outline btn-sm mob-fb" onclick="openF()" aria-expanded="false" aria-controls="fcol">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="4" y1="6" x2="20" y2="6"/><line x1="8" y1="12" x2="16" y2="12"/><line x1="11" y1="18" x2="13" y2="18"/></svg>
+              Filters <span class="badge b-red" style="padding:1px 7px;margin-left:2px;">2</span>
+            </button>
+            <p class="rcnt">Showing <strong>1–20</strong> of <strong>342</strong> results</p>
+          </div>
+          <div class="rctrl">
+            <label for="sorter" class="sr-only">Sort by</label>
+            <select class="sorter" id="sorter">
+              <option>Sort: Relevance</option>
+              <option>Name A–Z</option><option>Name Z–A</option>
+              <option>Recently Updated</option><option>Availability</option>
+            </select>
+            <div class="vtgl" role="group" aria-label="View mode">
+              <a href="crew_directorylist.html" class="vbtn on" aria-label="List view" aria-current="true" title="List view">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="3" cy="6" r="1.5" fill="currentColor"/><circle cx="3" cy="12" r="1.5" fill="currentColor"/><circle cx="3" cy="18" r="1.5" fill="currentColor"/></svg>
+              </a>
+              <a href="crew_directory.html" class="vbtn" aria-label="Grid view" title="Grid view">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <ol class="rlist" aria-label="Crew member results">
+
+          <li>
+            <a class="rcard au" href="javascript:void(0)" onclick="cardClick(event)" aria-label="Marcus Webb — Director of Photography, Los Angeles CA, Available Now">
+              <div class="rava"><img src="images (1).jpg" alt="Marcus Webb"></div>
+              <div class="rinfo">
+                <div class="rname">Marcus Webb</div>
+                <div class="rrole">Director of Photography</div>
+                <div class="rmeta">
+                  <span class="rmi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Los Angeles, CA</span>
+                  <span class="rmi">Union · IATSE 600</span>
+                  <span class="rmi">Travels Nationally</span>
+                  <span class="rmi">15 yrs experience</span>
+                </div>
+                <div class="rtags" aria-label="Skills"><span class="chip">ARRI Alexa</span><span class="chip">Sony Venice</span><span class="chip">Steadicam</span><span class="chip">Feature Film</span><span class="chip">Commercial</span></div>
+              </div>
+              <div class="ract">
+                <span class="adot"><span class="dot d-on" aria-hidden="true"></span>Available Now</span>
+                <button class="btn btn-red btn-sm" onclick="event.stopPropagation();showContact('Marcus Webb','Director of Photography')" aria-label="Contact Marcus Webb">Contact</button>
+                <button class="save-icon" onclick="event.stopPropagation();toggleSave(this,'Marcus Webb')" aria-label="Save Marcus Webb" title="Save">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+                </button>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a class="rcard au d1" href="javascript:void(0)" onclick="cardClick(event)" aria-label="Sarah Chen — 1st AC / Focus Puller, New York NY">
+              <div class="rava"><img src="images (3).jpg" alt="Sarah Chen"></div>
+              <div class="rinfo">
+                <div class="rname">Sarah Chen</div>
+                <div class="rrole">1st AC / Focus Puller</div>
+                <div class="rmeta">
+                  <span class="rmi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>New York, NY</span>
+                  <span class="rmi">Union · IATSE 600</span>
+                  <span class="rmi">Travels Nationally</span>
+                  <span class="rmi">8 yrs experience</span>
+                </div>
+                <div class="rtags" aria-label="Skills"><span class="chip">Preston Focus</span><span class="chip">ARRI Alexa</span><span class="chip">RED</span><span class="chip">Commercial</span></div>
+              </div>
+              <div class="ract">
+                <span class="adot"><span class="dot d-on" aria-hidden="true"></span>Available Now</span>
+                <button class="btn btn-red btn-sm" onclick="event.stopPropagation();showContact('Sarah Chen','1st AC / Focus Puller')" aria-label="Contact Sarah Chen">Contact</button>
+                <button class="save-icon" onclick="event.stopPropagation();toggleSave(this,'Sarah Chen')" aria-label="Save Sarah Chen">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+                </button>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a class="rcard au d2" href="javascript:void(0)" onclick="cardClick(event)" aria-label="Devon Torres — Gaffer, Atlanta GA">
+              <div class="rava"><img src="images.jpg" alt="Devon Torres"></div>
+              <div class="rinfo">
+                <div class="rname">Devon Torres</div>
+                <div class="rrole">Gaffer</div>
+                <div class="rmeta">
+                  <span class="rmi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Atlanta, GA</span>
+                  <span class="rmi">Non-Union</span>
+                  <span class="rmi">SE Region</span>
+                  <span class="rmi">12 yrs experience</span>
+                </div>
+                <div class="rtags" aria-label="Skills"><span class="chip">LED Lighting</span><span class="chip">HMI</span><span class="chip">Tungsten</span><span class="chip">TV Commercial</span></div>
+              </div>
+              <div class="ract">
+                <span class="adot"><span class="dot d-soon" aria-hidden="true"></span>Available Soon</span>
+                <button class="btn btn-red btn-sm" onclick="event.stopPropagation();showContact('Devon Torres','Gaffer')" aria-label="Contact Devon Torres">Contact</button>
+                <button class="save-icon" onclick="event.stopPropagation();toggleSave(this,'Devon Torres')" aria-label="Save Devon Torres">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+                </button>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a class="rcard au d3" href="javascript:void(0)" onclick="cardClick(event)" aria-label="Renata Flores — Production Sound Mixer, New Orleans LA">
+              <div class="rava"><img src="images (2).jpg" alt="Renata Flores"></div>
+              <div class="rinfo">
+                <div class="rname">Renata Flores</div>
+                <div class="rrole">Production Sound Mixer</div>
+                <div class="rmeta">
+                  <span class="rmi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>New Orleans, LA</span>
+                  <span class="rmi">Union · IATSE 478</span>
+                  <span class="rmi">Travels Nationally</span>
+                  <span class="rmi">10 yrs experience</span>
+                </div>
+                <div class="rtags" aria-label="Skills"><span class="chip">Lectrosonics</span><span class="chip">Sound Devices</span><span class="chip">Drama</span><span class="chip">Documentary</span></div>
+              </div>
+              <div class="ract">
+                <span class="adot"><span class="dot d-on" aria-hidden="true"></span>Available Now</span>
+                <button class="btn btn-red btn-sm" onclick="event.stopPropagation();showContact('Renata Flores','Production Sound Mixer')" aria-label="Contact Renata Flores">Contact</button>
+                <button class="save-icon" onclick="event.stopPropagation();toggleSave(this,'Renata Flores')" aria-label="Save Renata Flores">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+                </button>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a class="rcard au d4" href="javascript:void(0)" onclick="cardClick(event)" aria-label="James O'Brien — Key Grip, Chicago IL, Unavailable">
+              <div class="rava"><img src="images (1).jpg" alt="James O'Brien"></div>
+              <div class="rinfo">
+                <div class="rname">James O'Brien</div>
+                <div class="rrole">Key Grip</div>
+                <div class="rmeta">
+                  <span class="rmi"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>Chicago, IL</span>
+                  <span class="rmi">Union · IATSE 2</span>
+                  <span class="rmi">Travels Domestically</span>
+                  <span class="rmi">18 yrs experience</span>
+                </div>
+                <div class="rtags" aria-label="Skills"><span class="chip">Dolly</span><span class="chip">Technocrane</span><span class="chip">Rigging</span><span class="chip">Car Mounts</span></div>
+              </div>
+              <div class="ract">
+                <span class="adot"><span class="dot d-off" aria-hidden="true"></span>Unavailable</span>
+                <button class="btn btn-outline btn-sm" onclick="event.stopPropagation();cardClick(event)" aria-label="View profile of James O'Brien">View Profile</button>
+                <button class="save-icon" onclick="event.stopPropagation();toggleSave(this,'James O\'Brien')" aria-label="Save James O'Brien">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>
+                </button>
+              </div>
+            </a>
+          </li>
+
+        </ol>
+
+        <nav class="pagination" aria-label="Results pages">
+          <button class="pg" disabled aria-disabled="true" aria-label="Previous page"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg></button>
+          <button class="pg on" aria-current="page" aria-label="Page 1, current">1</button>
+          <button class="pg" onclick="showToast('Page 2 — demo prototype','info')" aria-label="Page 2">2</button>
+          <button class="pg" onclick="showToast('Page 3 — demo prototype','info')" aria-label="Page 3">3</button>
+          <span class="pg" style="border:none;background:none;cursor:default;" aria-hidden="true">…</span>
+          <button class="pg" onclick="showToast('Page 18 — demo prototype','info')" aria-label="Page 18">18</button>
+          <button class="pg" onclick="showToast('Page 2 — demo prototype','info')" aria-label="Next page"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg></button>
+        </nav>
+      </section>
+
+    </div>
+  </div>
+</main>
+
+<div id="mob-ov" onclick="closeF()"></div>
+
+<!-- Contact Modal -->
+<div id="cmodal" class="cmodal-bg" hidden role="dialog" aria-modal="true" aria-labelledby="cm-title">
+  <div class="cmodal" role="document">
+    <div class="cmodal-hd">
+      <div>
+        <h2 class="cmodal-title" id="cm-title">Contact</h2>
+        <p class="cmodal-role" id="cm-role"></p>
+      </div>
+      <button class="cmodal-x" onclick="closeContact()" aria-label="Close contact form">×</button>
+    </div>
+    <div class="field" style="margin-bottom:var(--s4)">
+      <label class="lbl" for="cm-email">Your email <span class="req" style="color:var(--red)">*</span></label>
+      <input class="inp" type="email" id="cm-email" placeholder="you@production.com" autocomplete="email">
+    </div>
+    <div class="field" style="margin-bottom:var(--s6)">
+      <label class="lbl" for="cm-msg">Message <span class="req" style="color:var(--red)">*</span></label>
+      <textarea class="inp" id="cm-msg" rows="4" placeholder="Hi, I'm hiring for a feature film shooting next month and your profile looks perfect for our team…" style="resize:vertical;min-height:100px;padding:var(--s3) var(--s4)"></textarea>
+    </div>
+    <div style="display:flex;gap:var(--s3);justify-content:flex-end">
+      <button class="btn btn-outline" onclick="closeContact()">Cancel</button>
+      <button class="btn btn-red" onclick="sendContact()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M22 2L11 13M22 2L15 22l-4-9-9-4 19-7z"/></svg>
+        Send Message
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+<script>
+/* ── Filters ── */
+function togF(btn){const s=btn.closest('.fsec');const o=s.classList.toggle('op');btn.setAttribute('aria-expanded',o)}
+function qp(btn){btn.classList.toggle('on');btn.setAttribute('aria-pressed',btn.classList.contains('on'))}
+function clrAll(){document.querySelectorAll('#achips .chip').forEach(c=>c.remove());document.querySelectorAll('.fopt input').forEach(cb=>cb.checked=false)}
+function rmChip(btn){btn.closest('.chip').remove()}
+function openF(){document.getElementById('fcol').classList.add('open');document.getElementById('mob-ov').style.display='block'}
+function closeF(){document.getElementById('fcol').classList.remove('open');document.getElementById('mob-ov').style.display='none'}
+
+/* ── Card click (whole card) ── */
+function cardClick(e){if(e.target.closest('button'))return;showToast('Full profile detail view — coming in the live build','info')}
+
+/* ── Contact modal ── */
+var _contactName='';
+function showContact(name,role){
+  _contactName=name;
+  document.getElementById('cm-title').textContent='Contact '+name;
+  document.getElementById('cm-role').textContent=role;
+  document.getElementById('cm-email').value='';
+  document.getElementById('cm-msg').value='';
+  var m=document.getElementById('cmodal');
+  m.removeAttribute('hidden');
+  document.getElementById('cm-email').focus();
+}
+function closeContact(){document.getElementById('cmodal').setAttribute('hidden','')}
+function sendContact(){
+  var email=document.getElementById('cm-email').value.trim();
+  var msg=document.getElementById('cm-msg').value.trim();
+  if(!email||!msg){showToast('Please fill in all fields','err');return;}
+  closeContact();
+  showToast('Message sent to '+_contactName+'!','ok');
+}
+
+/* ── Save toggle ── */
+function toggleSave(btn,name){
+  var saved=btn.classList.toggle('saved');
+  btn.setAttribute('aria-label',saved?'Saved — click to unsave '+name:'Save '+name);
+  btn.innerHTML=saved
+    ?'<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>'
+    :'<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M19 21l-7-5-7 5V5a2 2 0 012-2h10a2 2 0 012 2z"/></svg>';
+  showToast(saved?name+' saved to your list':'Removed from saved list',saved?'ok':'info');
+}
+
+/* ── Toast ── */
+var _toastTimer;
+function showToast(msg,type){
+  var t=document.getElementById('toast');
+  var icons={ok:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M20 6L9 17l-5-5"/></svg>',info:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>',err:'<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>'};
+  t.className='toast toast-'+(type==='ok'?'ok':'info');
+  t.innerHTML=(icons[type]||icons.info)+'<span>'+msg+'</span>';
+  t.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(function(){t.classList.remove('show')},3200);
+}
+
+/* ── Modal keyboard close ── */
+document.addEventListener('keydown',function(e){if(e.key==='Escape')closeContact()});
+document.getElementById('cmodal').addEventListener('click',function(e){if(e.target===this)closeContact()});
+</script>
+</body>
+</html>
